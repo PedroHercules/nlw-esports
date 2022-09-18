@@ -14,11 +14,13 @@ import { Background } from '../../components/Background';
 import { GameParams } from '../../@types/navigation';
 import { Heading } from '../../components/Heading';
 import { DuoCard, DuoCardProps } from '../../components/DuoCard';
+import { DuoMatch } from '../../components/DuoMatch';
 
 
 
 export function Game() {
   const [duos, setDuos] = useState<DuoCardProps[]>([]);
+  const [discordDuoSelected, setDiscordDuoSelected] = useState('');
   const navigation = useNavigation();
 
   const route = useRoute();
@@ -29,8 +31,14 @@ export function Game() {
     navigation.goBack();
   }
 
+  async function getDiscordUser(adsId: string) {
+    fetch(`https://96a5-45-179-115-240.sa.ngrok.io/ads/${adsId}/discord`)
+    .then(response => response.json())
+    .then(data => setDiscordDuoSelected(data.discord));
+  }
+
   useEffect(() => {
-    fetch(`https://5972-45-179-115-240.sa.ngrok.io/games/${game.id}/ads`)
+    fetch(`https://96a5-45-179-115-240.sa.ngrok.io/games/${game.id}/ads`)
     .then(response => response.json())
     .then(data => setDuos(data));
   }, []);
@@ -72,7 +80,7 @@ export function Game() {
           renderItem={({ item }) => (
             <DuoCard 
               data={item}
-              onConnect={() => {}}
+              onConnect={() => getDiscordUser(item.id)}
             />
           )}
           horizontal
@@ -84,6 +92,12 @@ export function Game() {
               Não há anúncios publicados ainda.
             </Text>
           )}
+        />
+
+        <DuoMatch 
+          visible={discordDuoSelected.length > 0 }
+          discord={discordDuoSelected}
+          onClose={() => setDiscordDuoSelected('')}
         />
       </SafeAreaView>
     </Background>
