@@ -1,4 +1,6 @@
 node_modules
 build
+*.sqlite
 # Keep environment variables out of version control
 .env
+

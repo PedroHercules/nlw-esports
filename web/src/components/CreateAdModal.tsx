@@ -1,6 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
+import axios from 'axios';
 
 import { Input } from './Form/Input';
 
@@ -15,21 +16,36 @@ interface GameInterface {
 export function CreateAdModal() {
   const [games, setGames] = useState<GameInterface[]>([]);
   const [weekDays, setWeekDays] = useState<string[]>([]);
+  const [useVoiceChannel, setUserVoiceChannel] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3333/games')
-      .then(response => response.json())
-      .then(data => {
-        setGames(data);
-      });
+    axios('http://localhost:3333/games').then(response => {
+        setGames(response.data);
+    });
   }, []);
 
-  function handleCreateAd(event: FormEvent) {
+  async function handleCreateAd(event: FormEvent) {
     event.preventDefault();
 
     const formData = new FormData(event.target as HTMLFormElement);
+    console.log(formData.get('weekDays'));
     const data = Object.fromEntries(formData);
-    console.log(data.weekDays)
+
+    try {
+      await axios.post(`http://localhost:3333/game/${data.game}/ads`, {
+        name: data.name,
+        yearsPlaying: Number(data.yearsPlaying),
+        discord: data.discord,
+        weekDays: weekDays.map(Number),
+        hourStart: data.hourStart,
+        hourEnd: data.hourEnd,
+        useVoiceChannel: useVoiceChannel
+      });
+      alert('Anúncio criado com sucesso!'); 
+    } catch (error) {
+      console.log(error)
+      alert('Erro ao criar anúncio!');
+    }
   }
 
   return (
@@ -82,8 +98,8 @@ export function CreateAdModal() {
                       onValueChange={setWeekDays}
                     >
                       <ToggleGroup.Item 
-                        title="Domingo"
                         value="0"
+                        title="Domingo"
                         className={`w-8 h-8 ${weekDays.includes('0') ? "bg-violet-500" : "bg-zinc-900"}`}
                       >
                           D
@@ -142,7 +158,17 @@ export function CreateAdModal() {
               </div>
 
               <label className="mt-2 flex items-center gap-2 text-sm">
-                <Checkbox.Root className="w-6 h-6 p-1 rounded bg-zinc-900">
+                <Checkbox.Root
+                  checked={useVoiceChannel}
+                  onCheckedChange={(checked) => {
+                    if (checked === true) {
+                      setUserVoiceChannel(true);
+                    }else{
+                      setUserVoiceChannel(false);
+                    }
+                  }} 
+                  className="w-6 h-6 p-1 rounded bg-zinc-900"
+                >
                   <Checkbox.Indicator>
                     <Check className="w-4 h-4 text-emerald-400" />
                   </Checkbox.Indicator>

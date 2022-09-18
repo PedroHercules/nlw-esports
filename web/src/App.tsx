@@ -2,6 +2,7 @@ import './styles/main.css';
 import imageLogo from './assets/logo-nlw.svg';
 
 import * as Dialog from '@radix-ui/react-dialog';
+import axios from 'axios';
 
 import { useState, useEffect } from 'react';
 
@@ -21,11 +22,9 @@ function App() {
   const [games, setGames] = useState<GameInterface[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:3333/games')
-      .then(response => response.json())
-      .then(data => {
-        setGames(data);
-      });
+    axios('http://localhost:3333/games').then(response => {
+        setGames(response.data);
+    });
   }, []);
 
   return (
