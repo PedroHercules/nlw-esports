@@ -25,11 +25,25 @@ function App() {
   const [games, setGames] = useState<GameInterface[]>([]);
 
   const [ref] = useKeenSlider<HTMLDivElement>({
-    mode: 'free',
-    slides: {
-      perView: 5.3,
-      spacing: 7,
+    mode: "free-snap",
+    breakpoints: {
+      '(min-width: 400px)': {
+        slides: {
+          perView: 1.5,
+          spacing: 7,
+        }
+      },
+      '(min-width: 700px)': {
+        slides: {
+          perView: 5.3,
+          spacing: 7,
+        }
+      },
     },
+    slides: { 
+      perView: 1.3,
+      spacing: 7 
+    }
   })
 
   useEffect(() => {
@@ -42,15 +56,15 @@ function App() {
     <div className="max-w-[1100px] mx-auto flex flex-col items-center my-20">
       <img src={imageLogo} alt="nlw" />
 
-      <h1 className='text-6xl text-white font-black mt-20'>
+      <h1 className='text-6xl text-white font-black mt-20 sm:text-3xl md:text-6xl'>
         Seu <span className='text-transparent bg-nlw-gradient bg-clip-text'>duo</span> está aqui.
       </h1>
 
-      <div ref={ref} className='keen-slider mt-5'>
+      <div ref={ref} className='keen-slider mt-5 px-1'>
         {
           games.map(game => {
             return (
-              <div className='keen-slider__slide rounded-lg'>
+              <div className='relative keen-slider__slide rounded-lg'>
                 <GameBanner 
                   key={game.id}
                   bannerUrl={game.banner}

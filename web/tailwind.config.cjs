@@ -15,6 +15,16 @@ module.exports = {
         'game-gradient': 'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 67.08%)'
       }
     },
+    screens: {
+      'sm': '300px',
+      // => @media (min-width: 576px) { ... }
+
+      'md': '700px',
+      // => @media (min-width: 960px) { ... }
+
+      'lg': '1440px',
+      // => @media (min-width: 1440px) { ... }
+    },
   },
   plugins: [],
 }
