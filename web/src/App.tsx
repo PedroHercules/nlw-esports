@@ -6,6 +6,9 @@ import axios from 'axios';
 
 import { useState, useEffect } from 'react';
 
+import 'keen-slider/keen-slider.min.css'
+import { useKeenSlider } from "keen-slider/react"
+
 import { GameBanner } from './components/GameBanner';
 import { CreateAdBanner } from './components/CreateAdBanner';
 import { CreateAdModal } from './components/CreateAdModal';
@@ -21,6 +24,14 @@ interface GameInterface {
 function App() {
   const [games, setGames] = useState<GameInterface[]>([]);
 
+  const [ref] = useKeenSlider<HTMLDivElement>({
+    mode: 'free',
+    slides: {
+      perView: 5.3,
+      spacing: 7,
+    },
+  })
+
   useEffect(() => {
     axios('http://localhost:3333/games').then(response => {
         setGames(response.data);
@@ -35,16 +46,19 @@ function App() {
         Seu <span className='text-transparent bg-nlw-gradient bg-clip-text'>duo</span> está aqui.
       </h1>
 
-      <div className='grid grid-cols-6 gap-6 mt-16'>
+      <div ref={ref} className='keen-slider mt-5'>
         {
           games.map(game => {
             return (
-              <GameBanner 
-                key={game.id}
-                bannerUrl={game.banner}
-                title={game.title}
-                adsCount={game._count.ads}
-              />
+              <div className='keen-slider__slide rounded-lg'>
+                <GameBanner 
+                  key={game.id}
+                  bannerUrl={game.banner}
+                  title={game.title}
+                  adsCount={game._count.ads}
+                />
+              </div>
+              
             );
           })
         }
